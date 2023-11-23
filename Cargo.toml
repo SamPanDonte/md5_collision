@@ -1,0 +1,16 @@
+[package]
+name = "md5_collision"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ahash = "0.8"
+clap = { version = "4.4", features = ["derive"] }
+hex = "0.4"
+md5 = "0.7"
+
+[profile.release]
+strip = true
+lto = true
+panic = "abort"
+codegen-units = 1
