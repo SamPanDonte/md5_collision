@@ -1,5 +1,5 @@
 use clap::Parser;
-use hex::{decode, encode};
+use hex::{decode, encode, FromHexError};
 use md5_collision::custom_md5;
 
 #[derive(Parser, Debug)]
@@ -9,7 +9,7 @@ pub struct Args {
     pub value: String,
 }
 
-fn main() -> Result<(), hex::FromHexError> {
+fn main() -> Result<(), FromHexError> {
     let data = decode(Args::parse().value)?;
     println!("{}", encode(custom_md5(data).as_bytes()));
     Ok(())

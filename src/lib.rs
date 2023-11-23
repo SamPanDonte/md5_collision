@@ -1,6 +1,5 @@
 pub mod cycle;
-
-use clap::Parser;
+pub mod naive;
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Digest([u8; 7]);
@@ -19,27 +18,10 @@ impl From<Digest> for [u8; 7] {
     }
 }
 
-impl std::fmt::Debug for Digest {
-    #[inline]
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for value in &self.0 {
-            write!(f, "{:02X}", value)?;
-        }
-        Ok(())
-    }
-}
-
 pub fn custom_md5<T: AsRef<[u8]>>(data: T) -> Digest {
     let mut result = [0; 7];
     result.copy_from_slice(&md5::compute(md5::compute(data).0).0[..7]);
     Digest(result)
-}
-
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-pub struct Args {
-    /// Hex encoded prefix for hash algorithm
-    pub prefix: String,
 }
 
 pub fn append_prefix(prefix: &[u8], input: &[u8]) -> Vec<u8> {

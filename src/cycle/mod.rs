@@ -1,4 +1,4 @@
-use crate::compute_function;
+use crate::{append_prefix, compute_function};
 
 pub mod brent;
 pub mod floyd;
@@ -9,7 +9,7 @@ fn converge(mut turtle: Vec<u8>, mut hare: Vec<u8>, prefix: &[u8]) -> (Vec<u8>, 
         let new_hare = compute_function(prefix, &hare);
 
         if new_turtle == new_hare {
-            break (turtle, hare);
+            break (append_prefix(prefix, &turtle), append_prefix(prefix, &hare));
         }
 
         turtle = new_turtle;

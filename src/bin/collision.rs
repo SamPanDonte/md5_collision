@@ -1,13 +1,15 @@
 use clap::{Parser, ValueEnum};
-use md5_collision::cycle;
+use hex::{encode, FromHexError};
+use md5_collision::{cycle, naive};
 
-#[derive(Clone, Debug, ValueEnum)]
+#[derive(Clone, ValueEnum)]
 enum Algorithm {
     Brent,
     Floyd,
+    Naive,
 }
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// Algorithm to use
@@ -19,7 +21,7 @@ struct Args {
     pub starting_point: String,
 }
 
-fn main() -> Result<(), hex::FromHexError> {
+fn main() -> Result<(), FromHexError> {
     let args = Args::parse();
     let starting_point = hex::decode(args.starting_point)?;
     let prefix = hex::decode(args.prefix)?;
@@ -27,13 +29,10 @@ fn main() -> Result<(), hex::FromHexError> {
     let (first, second) = match args.algorithm {
         Algorithm::Brent => cycle::brent::compute_collision(&prefix, &starting_point),
         Algorithm::Floyd => cycle::floyd::compute_collision(&prefix, &starting_point),
+        Algorithm::Naive => naive::compute_collision(&prefix),
     };
 
-    println!(
-        "Found collision {} and {}",
-        hex::encode(first),
-        hex::encode(second)
-    );
+    println!("Found collision {} and {}", encode(first), encode(second));
 
     Ok(())
 }
